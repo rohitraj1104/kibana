@@ -182,6 +182,11 @@ export class Plugin {
       taskManager,
     });
 
+    const getAuditorFactory = async () => {
+      const [{ auditTrail }] = await core.getStartServices();
+      return auditTrail;
+    };
+
     const authc = await setupAuthentication({
       auditLogger,
       getFeatureUsageService: this.getFeatureUsageService,
@@ -191,6 +196,7 @@ export class Plugin {
       license,
       loggers: this.initializerContext.logger,
       session,
+      getAuditorFactory,
     });
 
     const authz = this.authorizationService.setup({
@@ -221,10 +227,7 @@ export class Plugin {
       authz,
       savedObjects: core.savedObjects,
       getSpacesService: this.getSpacesService,
-      getAuditorFactory: async () => {
-        const [{ auditTrail }] = await core.getStartServices();
-        return auditTrail;
-      },
+      getAuditorFactory,
     });
 
     defineRoutes({

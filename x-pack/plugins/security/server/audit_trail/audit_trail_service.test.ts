@@ -6,7 +6,12 @@
 
 import { BehaviorSubject, Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { AuditTrailService, httpRequestEvent, filterEvent } from './audit_trail_service';
+import {
+  AuditTrailService,
+  httpRequestEvent,
+  filterEvent,
+  SetupParams,
+} from './audit_trail_service';
 import {
   coreMock,
   loggingSystemMock,
@@ -32,8 +37,14 @@ describe('AuditTrail plugin', () => {
       allowSubFeaturePrivileges: true,
     }),
   };
-  const config = {
+  const config: SetupParams['config'] = {
     enabled: true,
+    appender: {
+      kind: 'console',
+      layout: {
+        kind: 'pattern',
+      },
+    },
   };
   const getCurrentUser = jest.fn();
   const getSpacesService = jest.fn();
@@ -128,6 +139,12 @@ describe('AuditTrail plugin', () => {
         config: {
           enabled: true,
           ignore_filters: [{ actions: ['ACTION'] }],
+          appender: {
+            kind: 'console',
+            layout: {
+              kind: 'pattern',
+            },
+          },
         },
         http,
         logging: coreSetup.logging,
@@ -159,6 +176,31 @@ describe('AuditTrail plugin', () => {
           license,
           config: {
             enabled: false,
+            appender: {
+              kind: 'console',
+              layout: {
+                kind: 'pattern',
+              },
+            },
+          },
+          http,
+          logging: coreSetup.logging,
+          auditTrail: coreSetup.auditTrail,
+          getCurrentUser,
+          getSpacesService,
+        });
+
+        const args = coreSetup.logging.configure.mock.calls[0][0];
+        const value = await args.pipe(first()).toPromise();
+        expect(value.loggers?.every((l) => l.level === 'off')).toBe(true);
+      });
+
+      it('disables logging if config.appender: undefined', async () => {
+        service.setup({
+          license,
+          config: {
+            enabled: false,
+            appender: undefined,
           },
           http,
           logging: coreSetup.logging,

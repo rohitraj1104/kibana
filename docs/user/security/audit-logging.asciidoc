@@ -34,3 +34,97 @@ multiple audit events. The following is a list of the events that can be generat
 | `saved_objects_authorization_failure`    | Logged when a user isn't authorized to access a saved
                                              objects when using a role with <<kibana-privileges>>
 |======
+
+
+==== ECS audit events (beta)
+
+Below is a list of audit events using the ECS format. They only get logged when the new audit logger (beta) is enabled as shown in <<audit-logging-settings>>.
+
+Each event is broken down into `action`, `category`, `type` and `outcome` fields. This makes it easy to filter, query and aggregate the resulting logs using different criteria. 
+
+[cols="5*<",options="header"]
+|======
+| Action
+ | Category
+ | Type
+ | Outcome
+ | Description
+
+| `saved_object_create`
+ | `database`
+ | `creation`
+ | `unknown`
+ | Logged when a user is creating a saved object
+
+| `saved_object_get`
+ | `database`
+ | `access`
+ | `success`
+ | Logged when a user has accessed a saved object
+
+| `saved_object_update`
+ | `database`
+ | `change`
+ | `unknown`
+ | Logged when a user is updating a saved object
+
+| `saved_object_delete`
+ | `database`
+ | `deletion`
+ | `unknown`
+ | Logged when a user is deleting a saved object
+
+| `saved_object_find`
+ | `database`
+ | `access`
+ | `success`
+ | Logged when a user has accessed a saved object as part of a search operation
+
+| `saved_object_bulk_create`
+ | `database`
+ | `creation`
+ | `unknown`
+ | Logged when a user is creating a saved object as part of a bulk operation
+
+| `saved_object_bulk_get`
+ | `database`
+ | `access`
+ | `success`
+ | Logged when a user has accessed a saved object as part of a bulk operation
+
+| `saved_object_bulk_update`
+ | `database`
+ | `change`
+ | `unknown`
+ | Logged when a user is updating a saved object as part of a bulk operation
+
+| `saved_object_add_to_spaces`
+ | `database`
+ | `change`
+ | `unknown`
+ | Logged when a user is adding a saved object to a space
+
+| `saved_object_delete_from_spaces`
+ | `database`
+ | `change`
+ | `unknown`
+ | Logged when a user is deleting a saved object from a space
+
+| `http_request`
+ | `web`
+ | 
+ | `unknown`
+ | Logged when a user is making an HTTP request
+
+| `http_request`
+ | `web`
+ | 
+ | `success`
+ | Logged after a user has made a successful HTTP request (status code 2xx or 3xx)
+
+| `http_request`
+ | `web`
+ | 
+ | `error`
+ | Logged after a user has made a failed HTTP request (status code 4xx or 5xx)
+|======

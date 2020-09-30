@@ -24,7 +24,7 @@ import { SpacesPluginSetup } from '../../../spaces/server';
 import { SecurityLicense } from '../../common/licensing';
 import { ConfigType } from '../config';
 
-interface SetupParams {
+export interface SetupParams {
   license: Pick<SecurityLicense, 'features$'>;
   config: ConfigType['audit'];
   getCurrentUser: SecurityPluginSetup['authc']['getCurrentUser'];
@@ -95,7 +95,7 @@ export class AuditTrailService {
         loggers: [
           {
             context: 'audit_trail',
-            level: config.enabled ? 'info' : 'off',
+            level: config.enabled && config.appender ? 'info' : 'off',
             appenders: ['auditTrailAppender'],
           },
         ],

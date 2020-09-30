@@ -239,3 +239,102 @@ The format is a string of `<count>[ms\|s\|m\|h\|d\|w\|M\|Y]` (e.g. '20m', '24h',
 ============
 
 |===
+
+
+[float]
+[[audit-logging-settings]]
+===== Audit logging settings
+
+You can enable audit logging to support compliance, accountability and security by capturing who performed an action, what action was performed and when it occurred. For more details see <<xpack-security-audit-logging>>.
+
+[cols="2*<"]
+|===
+| `xpack.security.audit.enabled`
+  | Set to `true` to enable audit logging for security events. *Default:* `false`
+
+| `xpack.security.audit.appender` (beta)
+  | Optional. Specifies where audit logs should be written to and how they should be formatted. *Default:* console appender
+
+[source,yaml]
+----------------------------------------
+xpack.security.audit.appender:
+  kind: file
+  path: /path/to/audit.log
+  layout:
+    kind: json
+----------------------------------------
+
+[TIP]
+============
+If you use this setting the legacy audit logger will be disabled and the new audit logger will be used instead.
+============
+
+| `xpack.security.audit.appender.kind` (beta)
+  | Mandatory. Specifies where audit logs should be written to. Allowed values are `console` or `file` appender.
+|===
+
+
+[float]
+[[file-appender-settings]]
+===== File appender settings (beta)
+
+The file appender can be configured using the following settings:
+
+[cols="2*<"]
+|===
+| `xpack.security.audit.appender.path` (beta)
+  | Mandatory. Full file path the log file should be written to
+|===
+
+
+[cols="2*<"]
+|===
+| `xpack.security.audit.appender.layout.kind` (beta)
+  | Mandatory. Specifies how audit logs should be formatted. Allowed values are `json` or `pattern`.
+|===
+
+
+[float]
+[[pattern-layout-settings]]
+===== Pattern layout settings (beta)
+
+The pattern layout can be configured using the following settings:
+
+[cols="2*<"]
+|===
+| `xpack.security.audit.appender.layout.highlight` (beta)
+  | Optional. Set to `true` to enable audit logging for security events
+
+| `xpack.security.audit.appender.layout.pattern` (beta)
+  | Optional. Specifies how the log line should be formatted. *Default:* `[%date][%level][%logger]%meta %message`
+|===
+
+
+[cols="2*<"]
+|===
+| `xpack.security.audit.ignore_filters[]` (beta)
+  | List of filters that determine which events should be excluded from the audit log. An event will get filtered out if at least one of the provided filters matches.
+
+[source,yaml]
+----------------------------------------
+xpack.security.audit.ignore_filters:
+- actions: [http_request]
+  outcomes: [success] <1>
+- categories: [database]
+  types: [creation, change, deletion] <2>
+----------------------------------------
+<1> Filters out successful HTTP request events (Only logs HTTP requests with 4xx and 5xx status code)
+<2> Filters out data creation, change and deletion events (Only logs read operations)
+
+| `xpack.security.audit.ignore_filters[].actions[]` (beta)
+  | List of values matched against the `event.action` field of an audit event. See <<xpack-security-audit-logging>> for a list of available events.
+
+| `xpack.security.audit.ignore_filters[].categories[]` (beta)
+  | List of values matched against the `event.category` field of an audit event. See [ECS categorization field](https://www.elastic.co/guide/en/ecs/current/ecs-allowed-values-event-category.html) for allowed values.
+
+| `xpack.security.audit.ignore_filters[].types[]` (beta)
+  | List of values matched against the `event.type` field of an audit event. See [ECS type field](https://www.elastic.co/guide/en/ecs/current/ecs-allowed-values-event-type.html) for allowed values.
+
+| `xpack.security.audit.ignore_filters[].outcomes[]` (beta)
+  | List of values matched against the `event.outcome` field of an audit event. See [ECS outcome field](https://www.elastic.co/guide/en/ecs/current/ecs-allowed-values-event-outcome.html) for allowed values.
+|===
